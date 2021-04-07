@@ -1,31 +1,16 @@
 
-import networkx as nx
-from locale import atoi
 import math
 
 
 def euclidian(t1, t2):
         return math.sqrt((t1[0] - t2[0]) ** 2 + (t1[1] - t2[1]) ** 2)
+    
+    
+    
 class FileRepository(object):
     def __init__(self,__filename):
         self.__filename=__filename
      
-        
-    def __loadFromFile(self):
-        f=open(self.__filename+".txt","r")
-        listCities=[]
-        lines = [line.rstrip() for line in f]
-        nrCities=atoi(lines[0])
-        for nrCity in range(nrCities):
-            params=lines[nrCity+1].split(",")
-            distances=[]
-            for dist in params:
-                distances.append(atoi(dist))
-            listCities.append(distances)
-    
-        print("nrCities:",nrCities)
-        print("listCities:",listCities)
-        return (nrCities,listCities)
     
     def getCities(self):
         return self.read_tsp_file()
@@ -53,7 +38,7 @@ class FileRepository(object):
                     mat[i][j] = e
                     mat[j][i] = e
         f.close()
-        return (n,mat)
+        return n,mat
     
     
     

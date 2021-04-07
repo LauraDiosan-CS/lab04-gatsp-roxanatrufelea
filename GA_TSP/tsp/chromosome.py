@@ -1,19 +1,28 @@
 from random import randint, seed
+import random
 
-
-def generateARandomPermutation(n):
-    perm = [i for i in range(n)]
+def permutation(n):
+    permutation = []
+    for i in range (0,n):
+        permutation.append(i)
     pos1 = randint(0, n - 1)
     pos2 = randint(0, n - 1)
-    perm[pos1], perm[pos2] = perm[pos2], perm[pos1]
-    return perm
+    permutation[pos1], permutation[pos2] = permutation[pos2], permutation[pos1]
+    return permutation
+
+
+
+
+def createRoute(cityList):
+    cityList=[i for i in range(len(cityList))]
+    route = random.sample(cityList, len(cityList))
+    return route
 
 
 class Chromosome:
-    def __init__(self, problParam = None):
-        self.__problParam = problParam 
-        self.__repres = generateARandomPermutation(self.__problParam['noNodes'])
-        self.__fitness = 0.0
+    def __init__(self, param):
+        self.__param = param 
+        self.__repres =permutation(self.__param['noNodes'])
     
     @property
     def repres(self):
@@ -28,42 +37,43 @@ class Chromosome:
         self.__repres = l 
     
     @fitness.setter 
-    def fitness(self, fit = 0.0):
+    def fitness(self, fit ):
         self.__fitness = fit 
     
     def crossover(self, c):
-        pos1 = randint(-1, self.__problParam['noNodes'] - 1)
-        pos2 = randint(-1, self.__problParam['noNodes'] - 1)
-        if (pos2 < pos1):
-            pos1, pos2 = pos2, pos1 
-        k = 0
-        newrepres = self.__repres[pos1 : pos2]
-        for el in c.__repres[pos2:] +c.__repres[:pos2]:
-            if (el not in newrepres):
-                if (len(newrepres) < self.__problParam['noNodes'] - pos1):
-                    newrepres.append(el)
-                else:
-                    newrepres.insert(k, el)
-                    k += 1
+        
+        child = []
+        childP1 = []
+        childP2 = []
+    
+        geneA = int(random.random() *  self.__param['noNodes'])
+        geneB = int(random.random() *  self.__param['noNodes'])
+    
+        startGene = min(geneA, geneB)
+        endGene = max(geneA, geneB)
 
-        offspring = Chromosome(self.__problParam)
-        offspring.repres = newrepres
-        return offspring
+        for i in range(startGene, endGene):
+            childP1.append(self.repres[i])
+        
+        childP2 = [item for item in c.repres if item not in childP1]
+
+        child = childP1 + childP2
+       
+    
+    
+        off=Chromosome(self.__param)
+        off.repres=child
+        print(off.repres)
+        return off
     
     def mutation(self):
-        pos1 = randint(0, self.__problParam['noNodes'] - 1)
-        pos2 = randint(0, self.__problParam['noNodes'] - 1)
+        pos1 = randint(0, self.__param['noNodes'] - 1)
+        pos2 = randint(0, self.__param['noNodes'] - 1)
+        print(pos1,pos2)
         if (pos2 < pos1):
             pos1, pos2 = pos2, pos1
         el = self.__repres[pos2]
         del self.__repres[pos2]
         self.__repres.insert(pos1 + 1, el)
         
-    def __str__(self):
-        return "\nChromo: " + str(self.__repres) + " has fit: " + str(self.__fitness)
     
-    def __repr__(self):
-        return self.__str__()
-    
-    def __eq__(self, c):
-        return self.__repres == c.__repres and self.__fitness == c.__fitness
